@@ -90,15 +90,22 @@ public class CreateWeatherAtomAction extends AbstractCreateAtomAction {
         ctx.getWonMessageSender().sendMessage(createAtomMessage);
         logger.debug("atom creation message sent with message URI {}", createAtomMessage.getMessageURI());
         logger.debug("ATOM URI: " + atomURI.toString());
+        logger.debug("ATOM FOR CITY: " + weatherDataPoint.getWeather().getName().get());
     }
 
     public static Dataset generateAtomStructure(URI atomURI, WeatherDataPoint weatherDataPoint){
         WeatherAtomModelWrapper atomwrapper = new WeatherAtomModelWrapper(atomURI, weatherDataPoint);
         atomwrapper.setTitle(weatherDataPoint.getWeather().getName().get());
         //atomwrapper.setDescription("");
-        atomwrapper.addTag("Cloudiness: " + weatherDataPoint.getWeather().getCloudiness().get());
-        atomwrapper.addTag("Temperature: " + weatherDataPoint.getWeather().getTemperature().get());
-        atomwrapper.addTag("Windspeed: " + weatherDataPoint.getWeather().getWindSpeed().get());
+
+        String description = "Cloudiness: " + weatherDataPoint.getWeather().getCloudiness().get() + "%," + " Temperature: " + weatherDataPoint.getWeather().getTemperature().get() + "°C," + " Windspeed: " + weatherDataPoint.getWeather().getWindSpeed().get() + "m/s";
+        atomwrapper.setDescription(description);
+
+        atomwrapper.addTag("WeatherData");
+        atomwrapper.addTag("Vienna");
+
+
+        /*
         Model model = atomwrapper.getAtomModel();
         Model defaultmodel = ModelFactory.createDefaultModel();
 
@@ -106,10 +113,10 @@ public class CreateWeatherAtomAction extends AbstractCreateAtomAction {
         Property p1 = defaultmodel.createProperty("http://schema.org/Place");
         Property p2 = defaultmodel.createProperty("Property2");
 
-         /*Resource temperature = model.createResource(p2);
+         Resource temperature = model.createResource(p2);
         temperature.addProperty(p2, "15°C");
-        city.addProperty(p2, temperature);*/
-        atomwrapper.getAtomContentNode().addProperty(p1, city);
+        city.addProperty(p2, temperature);
+        atomwrapper.getAtomContentNode().addProperty(p1, city);*/
         return atomwrapper.getDataset();
     }
 }

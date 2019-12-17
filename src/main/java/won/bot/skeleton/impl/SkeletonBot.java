@@ -157,11 +157,24 @@ public class SkeletonBot extends EventBot implements MatcherExtension, ServiceAt
             }
         });
 
-        try {
-            Weather weather = new Weather("Vienna");
-            bus.publish(new CreateWeatherAtomEvent(new WeatherDataPoint(weather)));
+        String[] cities = new String[] { "Vienna", "London", "Paris", "Graz", "Linz", "Innsbruck", "Salzburg" };
 
-        } catch (APIException e) {
+        try {
+
+            while(true) {
+                for(String city : cities) {
+                    Weather weather = new Weather(city);
+                    bus.publish(new CreateWeatherAtomEvent(new WeatherDataPoint(weather)));
+                }
+
+                Thread.sleep(100000);
+            }
+
+        }
+        catch(InterruptedException ex) {
+            throw new RuntimeException(ex.getMessage());
+        }
+        catch (APIException e) {
             throw new RuntimeException(e);
         }
 
