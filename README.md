@@ -1,7 +1,6 @@
-# Web of Needs Bot Skeleton
+# Web of Needs Bot Weatherdata
 
-This skeleton contains a bot that creates a Service Atom that one can connect to. 
-For each atom that has been created on the configured node(s), the bot sends a message with the atomUri of the created Atom to everyone that is connected to the Service Atom.
+This Repository contains a bot that creates a Atoms containing a citys weather information.
 
 The Bot Skeleton is a [Spring Boot Application](https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-running-your-application.html).
 
