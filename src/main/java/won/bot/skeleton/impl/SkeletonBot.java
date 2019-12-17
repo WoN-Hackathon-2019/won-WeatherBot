@@ -153,33 +153,17 @@ public class SkeletonBot extends EventBot implements MatcherExtension, ServiceAt
 
         bus.subscribe(CreateWeatherAtomEvent.class, new ActionOnEventListener(ctx, new CreateWeatherAtomAction(ctx)));
 
-        bus.subscribe(AtomCreationFailedEvent.class, new BaseEventBotAction(ctx) {
-            @Override
-            protected void doRun(Event event, EventListener eventListener) throws Exception {
-                logger.info("CREATION FAILED");
-
-            }
-        });
-
         createWeatherAtoms(bus);
 
         BotTrigger botTrigger = new BotTrigger(ctx, Duration.ofMinutes(1));
         botTrigger.activate();
 
-        // Hint extrahieren
-        // Einbauen in WeatherData
-
         bus.subscribe(BotTriggerEvent.class, new ActionOnTriggerEventListener(ctx, botTrigger, new BaseEventBotAction(ctx) {
             @Override
             protected void doRun(Event event, EventListener eventListener) throws Exception {
-
-                logger.debug("TRIGGER FINISHED!");
                 createWeatherAtoms(bus);
             }
         }));
-
-
-
 
     }
 

@@ -103,14 +103,14 @@ public class CreateWeatherAtomAction extends AbstractCreateAtomAction {
         atomwrapper.setDescription(description);
 
         atomwrapper.addTag("WeatherData");
-        atomwrapper.addTag("Vienna");
+        atomwrapper.addTag(weatherDataPoint.getWeather().getName().get());
 
 
         String rdf_query = "" +
-                "SELECT ?airQuality" +
+                "SELECT ?airQuality " +
                 "WHERE { " +
-                "FILTER regex(" + weatherDataPoint.getWeather().getName().get() + ")" +
-                "}";
+                "FILTER regex(\"AirqualityBot|AirqualityData\")" +
+                " }";
 
 
         atomwrapper.addQuery(rdf_query);
