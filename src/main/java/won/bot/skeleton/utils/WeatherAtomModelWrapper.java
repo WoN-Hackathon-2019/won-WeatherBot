@@ -9,7 +9,7 @@ import java.net.URI;
 public class WeatherAtomModelWrapper extends DefaultAtomModelWrapper {
     public WeatherAtomModelWrapper(URI atomUri, WeatherDataPoint datapoint) {
         super(atomUri);
-        setDescription("Highest Temp: " + datapoint.getHighestTemperature());
+        //setDescription("Highest Temp: " + datapoint.getHighestTemperature());
 
         this.addSocket("#socket1", WXCHAT.ChatSocketString);
         this.setDefaultSocket("#socket1");
