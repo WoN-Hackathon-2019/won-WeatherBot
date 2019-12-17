@@ -31,6 +31,8 @@ import won.bot.framework.extensions.matcher.MatcherExtension;
 import won.bot.framework.extensions.matcher.MatcherExtensionAtomCreatedEvent;
 import won.bot.framework.extensions.serviceatom.ServiceAtomBehaviour;
 import won.bot.framework.extensions.serviceatom.ServiceAtomExtension;
+import won.bot.skeleton.WAC.APIException;
+import won.bot.skeleton.WAC.Weather;
 import won.bot.skeleton.WeatherDataPoint;
 import won.bot.skeleton.action.CreateWeatherAtomAction;
 import won.bot.skeleton.action.MatcherExtensionAtomCreatedAction;
@@ -155,7 +157,13 @@ public class SkeletonBot extends EventBot implements MatcherExtension, ServiceAt
             }
         });
 
-        bus.publish(new CreateWeatherAtomEvent(new WeatherDataPoint(1.5f)));
+        try {
+            Weather weather = new Weather("Vienna");
+            bus.publish(new CreateWeatherAtomEvent(new WeatherDataPoint(weather)));
+
+        } catch (APIException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
