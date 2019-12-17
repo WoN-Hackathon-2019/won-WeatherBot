@@ -93,6 +93,18 @@ public class Weather {
         jsonResponse = APIHTTPRequest();
         ParseJSON();
     }
+    Weather(String city, String country) throws APIException {
+        jsonResponse = APIHTTPRequest(city, country);
+        ParseJSON();
+    }
+    Weather(String city) throws APIException {
+        jsonResponse = APIHTTPRequest(city);
+        ParseJSON();
+    }
+    Weather(Integer cityId) throws APIException {
+        jsonResponse = APIHTTPRequest(cityId);
+        ParseJSON();
+    }
 
     public Optional<Date> getDataReceivingTime() {
         return DataReceivingTime;
@@ -172,9 +184,21 @@ public class Weather {
 
 
 
-
-
     private String APIHTTPRequest(){
+        return APIHTTPRequester("id=2172797");
+    }
+    private String APIHTTPRequest(String city, String country){
+        return APIHTTPRequester("q=" + city + "," + country);
+    }
+    private String APIHTTPRequest(String city){
+        return APIHTTPRequester("q=" + city);
+    }
+    private String APIHTTPRequest(Integer cityId){
+        return APIHTTPRequester("id=" + cityId);
+    }
+
+
+    private String APIHTTPRequester(String location){
         // Connect to API and retrieve data (as String)
         // using java.net.HttpURLConnection
         BufferedReader reader;
@@ -183,7 +207,7 @@ public class Weather {
 
         try {
 
-            URL url = new URL("https://api.openweathermap.org/data/2.5/weather?id=2172797&units=Metric&appid=" + System.getenv("APIKey"));
+            URL url = new URL("https://api.openweathermap.org/data/2.5/weather?" + location + "&units=Metric&appid=" + System.getenv("APIKey"));
             connection = (HttpURLConnection) url.openConnection();
 
 
@@ -371,32 +395,55 @@ public class Weather {
         }
     }
 
-    private Optional<Integer> extractInt(String key, JSONObject jo) {
-        if (jo.has(key) && !jo.isNull(key)){
-            return Optional.of(jo.getInt(key));
-        } else {
-            return Optional.empty();
+    private Optional<Integer> extractInt(String key, JSONObject jo) throws APIException {
+
+        try {
+            if (jo.has(key) && !jo.isNull(key)) {
+                return Optional.of(jo.getInt(key));
+            } else {
+                return Optional.empty();
+            }
+        } catch (JSONException e) {
+            throw new APIException(e);
         }
     }
-    private Optional<Float> extractFloat(String key, JSONObject jo) {
-        if (jo.has(key) && !jo.isNull(key)){
-            return Optional.of(jo.getFloat(key));
-        } else {
-            return Optional.empty();
+
+    private Optional<Float> extractFloat(String key, JSONObject jo) throws APIException {
+        try {
+
+            if (jo.has(key) && !jo.isNull(key)) {
+                return Optional.of(jo.getFloat(key));
+            } else {
+                return Optional.empty();
+            }
+        } catch (JSONException e) {
+            throw new APIException(e);
         }
     }
-    private Optional<String> extractString(String key, JSONObject jo) {
-        if (jo.has(key) && !jo.isNull(key)){
-            return Optional.of(jo.getString(key));
-        } else {
-            return Optional.empty();
+
+    private Optional<String> extractString(String key, JSONObject jo) throws APIException {
+        try {
+
+            if (jo.has(key) && !jo.isNull(key)) {
+                return Optional.of(jo.getString(key));
+            } else {
+                return Optional.empty();
+            }
+
+        } catch (JSONException e) {
+            throw new APIException(e);
         }
     }
-    private Optional<Date> extractDate(String key, JSONObject jo) {
-        if (jo.has(key) && !jo.isNull(key)){
-            return Optional.of(new Date(jo.getLong(key) * 1000 ));
-        } else {
-            return Optional.empty();
+
+    private Optional<Date> extractDate(String key, JSONObject jo) throws APIException {
+        try {
+            if (jo.has(key) && !jo.isNull(key)) {
+                return Optional.of(new Date(jo.getLong(key) * 1000));
+            } else {
+                return Optional.empty();
+            }
+        } catch (JSONException e) {
+            throw new APIException(e);
         }
     }
 
