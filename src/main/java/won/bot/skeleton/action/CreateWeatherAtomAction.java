@@ -2,6 +2,10 @@ package won.bot.skeleton.action;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.ModelFactory;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import won.bot.framework.eventbot.EventListenerContext;
@@ -54,7 +58,8 @@ public class CreateWeatherAtomAction extends AbstractCreateAtomAction {
         final URI wonNodeUri = ctx.getNodeURISource().getNodeURI();
         WonNodeInformationService wonNodeInformationService = ctx.getWonNodeInformationService();
         final URI atomURI = wonNodeInformationService.generateAtomURI(wonNodeUri);
-        Dataset dataset = new WeatherAtomModelWrapper(atomURI, weatherDataPoint).copyDataset();
+        //Dataset dataset = new WeatherAtomModelWrapper(atomURI, weatherDataPoint).copyDataset();
+        Dataset dataset = generateAtomStructure(atomURI, weatherDataPoint);
         logger.info("about to publish atom with URI: " + atomURI);
         logger.debug("creating atom on won node {} with content {} ", wonNodeUri,
                 StringUtils.abbreviate(RdfUtils.toString(dataset), 150));
@@ -85,5 +90,26 @@ public class CreateWeatherAtomAction extends AbstractCreateAtomAction {
         ctx.getWonMessageSender().sendMessage(createAtomMessage);
         logger.debug("atom creation message sent with message URI {}", createAtomMessage.getMessageURI());
         logger.debug("ATOM URI: " + atomURI.toString());
+    }
+
+    public static Dataset generateAtomStructure(URI atomURI, WeatherDataPoint weatherDataPoint){
+        WeatherAtomModelWrapper atomwrapper = new WeatherAtomModelWrapper(atomURI, weatherDataPoint);
+        atomwrapper.setTitle(weatherDataPoint.getWeather().getName().get());
+        //atomwrapper.setDescription("");
+        atomwrapper.addTag("Cloudiness: " + weatherDataPoint.getWeather().getCloudiness().get());
+        atomwrapper.addTag("Temperature: " + weatherDataPoint.getWeather().getTemperature().get());
+        atomwrapper.addTag("Windspeed: " + weatherDataPoint.getWeather().getWindSpeed().get());
+        Model model = atomwrapper.getAtomModel();
+        Model defaultmodel = ModelFactory.createDefaultModel();
+
+        Resource city = model.createResource("http:://schema.org/Weather");
+        Property p1 = defaultmodel.createProperty("http://schema.org/Place");
+        Property p2 = defaultmodel.createProperty("Property2");
+
+         /*Resource temperature = model.createResource(p2);
+        temperature.addProperty(p2, "15°C");
+        city.addProperty(p2, temperature);*/
+        atomwrapper.getAtomContentNode().addProperty(p1, city);
+        return atomwrapper.getDataset();
     }
 }
