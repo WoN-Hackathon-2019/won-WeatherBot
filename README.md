@@ -12,6 +12,9 @@ The Bot Skeleton is a [Spring Boot Application](https://docs.spring.io/spring-bo
 - [Openjdk 8](https://adoptopenjdk.net/index.html) - the method described here does **not work** with the Oracle 8 JDK!
 - Maven framework set up
 
+### Before starting: 
+Create a free API-Key at Openweatherdata.org
+
 ### On the command line
 
 ```
@@ -27,6 +30,7 @@ Now go to [What's new](https://hackathon.matchat.org/owner/#!/overview) to find 
 2. Add the environment variables
 
   * `WON_NODE_URI` pointing to your node uri (e.g. `https://hackathonnode.matchat.org/won` without quotes)
+  * `APIKey` with the API-Key form Openweatherdata.org as value
   
   to your run configuration.
   
