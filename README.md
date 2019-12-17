@@ -1,7 +1,6 @@
-# Web of Needs Bot Skeleton
+# Web of Needs Bot Weatherdata
 
-This skeleton contains a bot that creates a Service Atom that one can connect to. 
-For each atom that has been created on the configured node(s), the bot sends a message with the atomUri of the created Atom to everyone that is connected to the Service Atom.
+This Repository contains a bot that creates a Atoms containing a citys weather information.
 
 The Bot Skeleton is a [Spring Boot Application](https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-running-your-application.html).
 
@@ -11,6 +10,9 @@ The Bot Skeleton is a [Spring Boot Application](https://docs.spring.io/spring-bo
 
 - [Openjdk 8](https://adoptopenjdk.net/index.html) - the method described here does **not work** with the Oracle 8 JDK!
 - Maven framework set up
+
+### Before starting: 
+Create a free API-Key at Openweatherdata.org
 
 ### On the command line
 
@@ -27,6 +29,7 @@ Now go to [What's new](https://hackathon.matchat.org/owner/#!/overview) to find 
 2. Add the environment variables
 
   * `WON_NODE_URI` pointing to your node uri (e.g. `https://hackathonnode.matchat.org/won` without quotes)
+  * `APIKey` with the API-Key form Openweatherdata.org as value
   
   to your run configuration.
   
@@ -36,10 +39,6 @@ If you get a message indicating your keysize is restricted on startup (`JCE unli
 
 ##### Optional Parameters for both Run Configurations:
 - `WON_KEYSTORE_DIR` path to folder where `bot-keys.jks` and `owner-trusted-certs.jks` are stored (needs write access and folder must exist) 
-
-## Start coding
-
-Once the skeleton bot is running, you can use it as a base for implementing your own application. 
 
 ## Setting up
 - Download or clone this repository
