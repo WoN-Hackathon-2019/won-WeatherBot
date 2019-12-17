@@ -1,3 +1,4 @@
+package won.bot.skeleton.WAC;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,15 +24,36 @@ public class Weather {
     Optional<Date> DataReceivingTime;
 //    timezone          Shift in seconds from UTC
     Optional<Integer> Timezone;
-//    name 	City name
+
+    public static String getJsonResponse() {
+        return jsonResponse;
+    }
+
+    public Optional<Integer> getCityId() {
+        return CityId;
+    }
+
+    public Optional<Integer> getTimezone() {
+        return Timezone;
+    }
+
+    public Optional<String> getName() {
+        return Name;
+    }
+
+    public Optional<Integer> getCOD() {
+        return COD;
+    }
+
+    //    name 	City name
     Optional<String> Name;
 //    cod Internal parameter (probably success/error sign)
     Optional<Integer> COD;
 //    coord
 //        lat 	City geo location, latitude
 //        lon 	City geo location, longitude
-    Optional<Float> CoordsLatitude;
-    Optional<Float> CoordsLongitude;
+    Optional<Double> CoordsLatitude;
+    Optional<Double> CoordsLongitude;
 //    sys
 //        message 	System parameter, do not use it
 //        country 	Country code (GB, JP etc.)
@@ -48,10 +70,10 @@ public class Weather {
 //        pressure 	Atmospheric pressure (on the sea level, if there is no sea_level or grnd_level data) -> hPa
 //        sea_level 	Atmospheric pressure on the sea level -> hPa
 //        grnd_level 	Atmospheric pressure on the ground level -> hPa
-    Optional<Float> Temperature;
+    Optional<Double> Temperature;
     Optional<Integer> Humidity;
-    Optional<Float> TempMin;
-    Optional<Float> TempMax;
+    Optional<Double> TempMin;
+    Optional<Double> TempMax;
     Optional<Integer> Pressure;
     Optional<Integer> PressureSeaLevel;
     Optional<Integer> PressureGroundLevel;
@@ -59,9 +81,9 @@ public class Weather {
 //        speed 	Wind speed 	meter/sec
 //        deg 	Wind direction -> degrees (meteorological)
 //        gust 	Wind gust -> meter/sec
-    Optional<Float> WindSpeed;
+    Optional<Double> WindSpeed;
     Optional<Integer> WindDirection;
-    Optional<Float> WindGust;
+    Optional<Double> WindGust;
 
 //    clouds
 //        all 	Cloudiness 	% 	% 	%
@@ -89,19 +111,19 @@ public class Weather {
 
 
 
-    Weather() throws APIException {
+    public Weather() throws APIException {
         jsonResponse = APIHTTPRequest();
         ParseJSON();
     }
-    Weather(String city, String country) throws APIException {
+    public Weather(String city, String country) throws APIException {
         jsonResponse = APIHTTPRequest(city, country);
         ParseJSON();
     }
-    Weather(String city) throws APIException {
+    public Weather(String city) throws APIException {
         jsonResponse = APIHTTPRequest(city);
         ParseJSON();
     }
-    Weather(Integer cityId) throws APIException {
+    public Weather(Integer cityId) throws APIException {
         jsonResponse = APIHTTPRequest(cityId);
         ParseJSON();
     }
@@ -109,10 +131,10 @@ public class Weather {
     public Optional<Date> getDataReceivingTime() {
         return DataReceivingTime;
     }
-    public Optional<Float> getCoordsLatitude() {
+    public Optional<Double> getCoordsLatitude() {
         return CoordsLatitude;
     }
-    public Optional<Float> getCoordsLongitude() {
+    public Optional<Double> getCoordsLongitude() {
         return CoordsLongitude;
     }
     public Optional<String> getCountry() {
@@ -124,16 +146,16 @@ public class Weather {
     public Optional<Date> getSunsetTime() {
         return SunsetTime;
     }
-    public Optional<Float> getTemperature() {
+    public Optional<Double> getTemperature() {
         return Temperature;
     }
     public Optional<Integer> getHumidity() {
         return Humidity;
     }
-    public Optional<Float> getTempMin() {
+    public Optional<Double> getTempMin() {
         return TempMin;
     }
-    public Optional<Float> getTempMax() {
+    public Optional<Double> getTempMax() {
         return TempMax;
     }
     public Optional<Integer> getPressure() {
@@ -145,13 +167,13 @@ public class Weather {
     public Optional<Integer> getPressureGroundLevel() {
         return PressureGroundLevel;
     }
-    public Optional<Float> getWindSpeed() {
+    public Optional<Double> getWindSpeed() {
         return WindSpeed;
     }
     public Optional<Integer> getWindDirection() {
         return WindDirection;
     }
-    public Optional<Float> getWindGust() {
+    public Optional<Double> getWindGust() {
         return WindGust;
     }
     public Optional<Integer> getCloudiness() {
@@ -252,57 +274,57 @@ public class Weather {
             throw new APIException(jex);
         }
 
-        if (jo.has("cod") && !jo.isNull("cod") && !(jo.getInt("cod") == 200)){
-            if(jo.has("message")){
-                throw new APIException("ResponseCode: " + jo.getString("cod") + ", Message: " + jo.getString("message")  + ", JSON:" + jsonResponse );
-            } else {
-                throw new APIException("ResponseCode: " + jo.getString("cod") + ", JSON:" + jsonResponse );
+        try {
+            if (jo.has("cod") && !jo.isNull("cod") && !(jo.getInt("cod") == 200)) {
+                if (jo.has("message")) {
+                    throw new APIException("ResponseCode: " + jo.getString("cod") + ", Message: " + jo.getString("message") + ", JSON:" + jsonResponse);
+                } else {
+                    throw new APIException("ResponseCode: " + jo.getString("cod") + ", JSON:" + jsonResponse);
+                }
             }
-        }
-
 
 
 //      coord
 //          lat 	City geo location, latitude
 //          lon 	City geo location, longitude
-        if (jo.has("coord") && !jo.isNull("coord")){
-            JSONObject joCoord = jo.getJSONObject("coord");
-            CoordsLatitude = extractFloat("lat", joCoord);
-            CoordsLongitude = extractFloat("lon", joCoord);
-        } else {
-            CoordsLongitude = Optional.empty();
-            CoordsLatitude = Optional.empty();
-        }
+            if (jo.has("coord") && !jo.isNull("coord")) {
+                JSONObject joCoord = jo.getJSONObject("coord");
+                CoordsLatitude = extractDouble("lat", joCoord);
+                CoordsLongitude = extractDouble("lon", joCoord);
+            } else {
+                CoordsLongitude = Optional.empty();
+                CoordsLatitude = Optional.empty();
+            }
 //      id 	    City identification
-        CityId = extractInt("id", jo);
+            CityId = extractInt("id", jo);
 //      timezone    Shift in seconds from UTC
-        Timezone = extractInt("timezone", jo);
+            Timezone = extractInt("timezone", jo);
 //      name    City name
-        Name = extractString("name", jo);
+            Name = extractString("name", jo);
 //      cod Internal parameter (probably success/error sign)
-        COD = extractInt("cod", jo);
+            COD = extractInt("cod", jo);
 
 
 //    dt 	Data receiving time
 //    unix, UTC
 
-        DataReceivingTime = extractDate("dt", jo);
+            DataReceivingTime = extractDate("dt", jo);
 
 //    sys
 //        message 	System parameter, do not use it
 //        country 	Country code (GB, JP etc.)
 //        sunrise 	Sunrise time 	unix, UTC
 //        sunset 	Sunset time 	unix, UTC
-        if (jo.has("sys") && !jo.isNull("sys")) {
-            JSONObject joSys = jo.getJSONObject("sys");
-            Country = extractString("country", joSys);
-            SunriseTime = extractDate("sunrise", joSys);
-            SunsetTime = extractDate("sunset", joSys);
-        } else {
-            Country = Optional.empty();
-            SunriseTime = Optional.empty();
-            SunsetTime = Optional.empty();
-        }
+            if (jo.has("sys") && !jo.isNull("sys")) {
+                JSONObject joSys = jo.getJSONObject("sys");
+                Country = extractString("country", joSys);
+                SunriseTime = extractDate("sunrise", joSys);
+                SunsetTime = extractDate("sunset", joSys);
+            } else {
+                Country = Optional.empty();
+                SunriseTime = Optional.empty();
+                SunsetTime = Optional.empty();
+            }
 //    main
 //        temp 	Temperature -> Celsius
 //        humidity 	Humidity -> %
@@ -311,87 +333,90 @@ public class Weather {
 //        pressure 	Atmospheric pressure (on the sea level, if there is no sea_level or grnd_level data) -> hPa
 //        sea_level 	Atmospheric pressure on the sea level -> hPa
 //        grnd_level 	Atmospheric pressure on the ground level -> hPa
-        if (jo.has("main") && !jo.isNull("main")) {
-            JSONObject joMain = jo.getJSONObject("main");
-            Temperature = extractFloat("temp", joMain);
-            Humidity = extractInt("humidity", joMain);
-            TempMin = extractFloat("temp_min", joMain);
-            TempMax = extractFloat("temp_max", joMain);
-            Pressure = extractInt("pressure", joMain);
-            PressureSeaLevel = extractInt("sea_level", joMain);
-            PressureGroundLevel = extractInt("grnd_level", joMain);
-        } else {
-            Temperature = Optional.empty();
-            Humidity = Optional.empty();
-            TempMin = Optional.empty();
-            TempMax = Optional.empty();
-            Pressure = Optional.empty();
-            PressureSeaLevel = Optional.empty();
-            PressureGroundLevel = Optional.empty();
-        }
+            if (jo.has("main") && !jo.isNull("main")) {
+                JSONObject joMain = jo.getJSONObject("main");
+                Temperature = extractDouble("temp", joMain);
+                Humidity = extractInt("humidity", joMain);
+                TempMin = extractDouble("temp_min", joMain);
+                TempMax = extractDouble("temp_max", joMain);
+                Pressure = extractInt("pressure", joMain);
+                PressureSeaLevel = extractInt("sea_level", joMain);
+                PressureGroundLevel = extractInt("grnd_level", joMain);
+            } else {
+                Temperature = Optional.empty();
+                Humidity = Optional.empty();
+                TempMin = Optional.empty();
+                TempMax = Optional.empty();
+                Pressure = Optional.empty();
+                PressureSeaLevel = Optional.empty();
+                PressureGroundLevel = Optional.empty();
+            }
 
 //    wind
 //        speed 	Wind speed 	meter/sec
 //        deg 	Wind direction -> degrees (meteorological)
 //        gust 	Wind gust -> meter/sec
-        if (jo.has("wind") && !jo.isNull("wind")) {
-            JSONObject joWind = jo.getJSONObject("wind");
-            WindSpeed = extractFloat("speed", joWind);
-            WindDirection = extractInt("deg", joWind);
-            WindGust = extractFloat("gust", joWind);
-        } else {
-            WindSpeed = Optional.empty();
-            WindDirection = Optional.empty();
-            WindGust = Optional.empty();
-        }
+            if (jo.has("wind") && !jo.isNull("wind")) {
+                JSONObject joWind = jo.getJSONObject("wind");
+                WindSpeed = extractDouble("speed", joWind);
+                WindDirection = extractInt("deg", joWind);
+                WindGust = extractDouble("gust", joWind);
+            } else {
+                WindSpeed = Optional.empty();
+                WindDirection = Optional.empty();
+                WindGust = Optional.empty();
+            }
 
 //    clouds
 //        all 	Cloudiness 	% 	% 	%
-        if (jo.has("clouds") && !jo.isNull("clouds")) {
-            JSONObject joClouds = jo.getJSONObject("clouds");
-            Cloudiness = extractInt("all", joClouds);
-        } else {
-            Cloudiness = Optional.empty();
-        }
+            if (jo.has("clouds") && !jo.isNull("clouds")) {
+                JSONObject joClouds = jo.getJSONObject("clouds");
+                Cloudiness = extractInt("all", joClouds);
+            } else {
+                Cloudiness = Optional.empty();
+            }
 
 //    weather (more info Weather condition codes)
 //        id 	Weather condition id
 //        main 	Group of weather parameters (Rain, Snow, Extreme etc.) 	- 	- 	-
 //        description 	Weather condition within the group 	- 	- 	-
 //        icon 	Weather icon id
-        if (jo.has("weather") && !jo.isNull("weather")) {
-            JSONObject joWeather = jo.getJSONArray("weather").getJSONObject(0);
-            WeatherId = extractInt("id", joWeather);
-            WeatherGroup = extractString("main", joWeather);
-            WeatherDescription = extractString("description", joWeather);
-            WeatherIcon = extractString("icon", joWeather);
-        } else {
-            WeatherId = Optional.empty();
-            WeatherGroup = Optional.empty();
-            WeatherDescription = Optional.empty();
-            WeatherIcon = Optional.empty();
-        }
+            if (jo.has("weather") && !jo.isNull("weather")) {
+                JSONObject joWeather = jo.getJSONArray("weather").getJSONObject(0);
+                WeatherId = extractInt("id", joWeather);
+                WeatherGroup = extractString("main", joWeather);
+                WeatherDescription = extractString("description", joWeather);
+                WeatherIcon = extractString("icon", joWeather);
+            } else {
+                WeatherId = Optional.empty();
+                WeatherGroup = Optional.empty();
+                WeatherDescription = Optional.empty();
+                WeatherIcon = Optional.empty();
+            }
 //    rain
 //        1h 	Precipitation volume for last hour 	mm 	mm 	mm
 //        3h 	Precipitation volume for last 3 hours 	mm 	mm 	mm
-        if (jo.has("rain") && !jo.isNull("rain")) {
-            JSONObject joRain = jo.getJSONObject("rain");
-            Rain1h = extractInt("1h", joRain);
-            Rain3h = extractInt("3h", joRain);
-        } else {
-            Rain1h = Optional.empty();
-            Rain3h = Optional.empty();
-        }
+            if (jo.has("rain") && !jo.isNull("rain")) {
+                JSONObject joRain = jo.getJSONObject("rain");
+                Rain1h = extractInt("1h", joRain);
+                Rain3h = extractInt("3h", joRain);
+            } else {
+                Rain1h = Optional.empty();
+                Rain3h = Optional.empty();
+            }
 //    snow
 //        1h 	Snow volume for last hour 	mm 	mm 	mm
 //        3h 	Snow volume for last 3 hours 	mm 	mm 	mm
-        if (jo.has("snow") && !jo.isNull("snow")) {
-            JSONObject joSnow = jo.getJSONObject("snow");
-            Snow1h = extractInt("1h", joSnow);
-            Snow3h = extractInt("3h", joSnow);
-        } else {
-            Snow1h = Optional.empty();
-            Snow3h = Optional.empty();
+            if (jo.has("snow") && !jo.isNull("snow")) {
+                JSONObject joSnow = jo.getJSONObject("snow");
+                Snow1h = extractInt("1h", joSnow);
+                Snow3h = extractInt("3h", joSnow);
+            } else {
+                Snow1h = Optional.empty();
+                Snow3h = Optional.empty();
+            }
+        } catch (JSONException e) {
+            throw new APIException(e);
         }
     }
 
@@ -408,11 +433,11 @@ public class Weather {
         }
     }
 
-    private Optional<Float> extractFloat(String key, JSONObject jo) throws APIException {
+    private Optional<Double> extractDouble(String key, JSONObject jo) throws APIException {
         try {
 
             if (jo.has(key) && !jo.isNull(key)) {
-                return Optional.of(jo.getFloat(key));
+                return Optional.of(jo.getDouble(key));
             } else {
                 return Optional.empty();
             }
