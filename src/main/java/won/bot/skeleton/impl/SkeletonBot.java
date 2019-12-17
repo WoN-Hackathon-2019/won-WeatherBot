@@ -2,6 +2,7 @@ package won.bot.skeleton.impl;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
+import java.time.Duration;
 
 import org.apache.jena.query.Dataset;
 import org.slf4j.Logger;
@@ -10,6 +11,9 @@ import org.slf4j.LoggerFactory;
 import won.bot.framework.bot.base.EventBot;
 import won.bot.framework.eventbot.EventListenerContext;
 import won.bot.framework.eventbot.action.BaseEventBotAction;
+import won.bot.framework.eventbot.action.impl.trigger.ActionOnTriggerEventListener;
+import won.bot.framework.eventbot.action.impl.trigger.BotTrigger;
+import won.bot.framework.eventbot.action.impl.trigger.BotTriggerEvent;
 import won.bot.framework.eventbot.behaviour.ExecuteWonMessageCommandBehaviour;
 import won.bot.framework.eventbot.bus.EventBus;
 import won.bot.framework.eventbot.event.AtomCreationFailedEvent;
@@ -157,27 +161,42 @@ public class SkeletonBot extends EventBot implements MatcherExtension, ServiceAt
             }
         });
 
+        createWeatherAtoms(bus);
+
+        BotTrigger botTrigger = new BotTrigger(ctx, Duration.ofMinutes(1));
+        botTrigger.activate();
+
+        // Hint extrahieren
+        // Einbauen in WeatherData
+
+        bus.subscribe(BotTriggerEvent.class, new ActionOnTriggerEventListener(ctx, botTrigger, new BaseEventBotAction(ctx) {
+            @Override
+            protected void doRun(Event event, EventListener eventListener) throws Exception {
+
+                logger.debug("TRIGGER FINISHED!");
+                createWeatherAtoms(bus);
+            }
+        }));
+
+
+
+
+    }
+
+    private void createWeatherAtoms(EventBus bus) {
         String[] cities = new String[] { "Vienna", "London", "Paris", "Graz", "Linz", "Innsbruck", "Salzburg" };
 
         try {
 
-            while(true) {
-                for(String city : cities) {
-                    Weather weather = new Weather(city);
-                    bus.publish(new CreateWeatherAtomEvent(new WeatherDataPoint(weather)));
-                }
-
-                Thread.sleep(100000);
+            for(String city : cities) {
+                Weather weather = new Weather(city);
+                bus.publish(new CreateWeatherAtomEvent(new WeatherDataPoint(weather)));
             }
 
-        }
-        catch(InterruptedException ex) {
-            throw new RuntimeException(ex.getMessage());
         }
         catch (APIException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private WonMessage createWonMessage(URI connectionURI, String message) throws WonMessageBuilderException {

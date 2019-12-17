@@ -10,6 +10,7 @@ import won.bot.framework.extensions.matcher.MatcherExtensionAtomCreatedEvent;
 import won.bot.skeleton.context.SkeletonBotContextWrapper;
 import won.protocol.message.WonMessage;
 import won.protocol.message.builder.WonMessageBuilder;
+import won.protocol.util.DefaultAtomModelWrapper;
 
 import java.lang.invoke.MethodHandles;
 import java.net.URI;
@@ -48,6 +49,13 @@ public class MatcherExtensionAtomCreatedAction extends BaseEventBotAction {
                                             .text("We registered that an Atom was created, atomUri is: " + atomCreatedEvent.getAtomURI())
                                             .build();
                 ctx.getWonMessageSender().prepareAndSendMessage(wonMessage);
+            }
+        }
+
+        DefaultAtomModelWrapper atomModelWrapper = new DefaultAtomModelWrapper(atomCreatedEvent.getAtomData());
+        for (String tag: atomModelWrapper.getAllTags()){
+            if(tag.equals("AirQuality")) {
+
             }
         }
     }

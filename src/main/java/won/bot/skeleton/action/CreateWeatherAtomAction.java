@@ -2,6 +2,7 @@ package won.bot.skeleton.action;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jena.query.Dataset;
+import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -45,9 +46,10 @@ public class CreateWeatherAtomAction extends AbstractCreateAtomAction {
                     "CreateEdenredAtomAction does not work without a SkeletonBotContextWrapper and CreateEdenredAtomEvent");
         }
         SkeletonBotContextWrapper botContextWrapper = (SkeletonBotContextWrapper) ctx.getBotContextWrapper();
-        CreateWeatherAtomEvent createEdenredAtomEvent = (CreateWeatherAtomEvent) event;
+        CreateWeatherAtomEvent createWeatherAtomEvent = (CreateWeatherAtomEvent) event;
 
-        WeatherDataPoint weatherDataPoint = createEdenredAtomEvent.getWeatherDatapoint();
+        WeatherDataPoint weatherDataPoint = createWeatherAtomEvent.getWeatherDatapoint();
+
 
         /*
          * TODO if (botContextWrapper.getAtomUriForRaid(edenredAtomToCreate) != null) {
@@ -96,7 +98,6 @@ public class CreateWeatherAtomAction extends AbstractCreateAtomAction {
     public static Dataset generateAtomStructure(URI atomURI, WeatherDataPoint weatherDataPoint){
         WeatherAtomModelWrapper atomwrapper = new WeatherAtomModelWrapper(atomURI, weatherDataPoint);
         atomwrapper.setTitle(weatherDataPoint.getWeather().getName().get());
-        //atomwrapper.setDescription("");
 
         String description = "Cloudiness: " + weatherDataPoint.getWeather().getCloudiness().get() + "%," + " Temperature: " + weatherDataPoint.getWeather().getTemperature().get() + "°C," + " Windspeed: " + weatherDataPoint.getWeather().getWindSpeed().get() + "m/s";
         atomwrapper.setDescription(description);
@@ -105,6 +106,14 @@ public class CreateWeatherAtomAction extends AbstractCreateAtomAction {
         atomwrapper.addTag("Vienna");
 
 
+        String rdf_query = "" +
+                "SELECT ?airQuality" +
+                "WHERE { " +
+                "FILTER regex(" + weatherDataPoint.getWeather().getName().get() + ")" +
+                "}";
+
+
+        atomwrapper.addQuery(rdf_query);
         /*
         Model model = atomwrapper.getAtomModel();
         Model defaultmodel = ModelFactory.createDefaultModel();
