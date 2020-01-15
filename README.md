@@ -29,7 +29,7 @@ Now go to [What's new](https://hackathon.matchat.org/owner/#!/overview) to find 
 2. Add the environment variables
 
   * `WON_NODE_URI` pointing to your node uri (e.g. `https://hackathonnode.matchat.org/won` without quotes)
-  * `APIKey` with the API-Key form Openweatherdata.org as value
+  * `APIKey` with the API-Key from Openweatherdata.org as value
   
   to your run configuration.
   
