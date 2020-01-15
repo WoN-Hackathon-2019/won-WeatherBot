@@ -11,20 +11,92 @@ import java.net.URL;
 import java.util.Date;
 import java.util.Optional;
 
-
+/**
+ * When a weather object is created it pulls weather data from OpenWeatherData.com for either a default city ( id=2172797 ) or a supplied city
+ *
+ * Afterwards get-Methods can be used to read the weather information. Most getter-Methods do return an Optional<type> object
+ * as some informations may not be available in some cities (e.g. the amount of snow if it didn't snow).
+ */
 public class Weather {
 
 
     private static HttpURLConnection connection;
     private static String jsonResponse;
 
-//    id 	City identification
+    //    id 	City identification
     Optional<Integer> CityId;
-//    dt 	Data receiving time -> unix, UTC
+    //    dt 	Data receiving time -> unix, UTC
     Optional<Date> DataReceivingTime;
-//    timezone          Shift in seconds from UTC
+    //    timezone          Shift in seconds from UTC
     Optional<Integer> Timezone;
 
+    //    name 	City name
+    Optional<String> Name;
+    //    cod Internal parameter (probably success/error sign)
+    Optional<Integer> COD;
+    //    coord
+//        lat 	City geo location, latitude
+//        lon 	City geo location, longitude
+    Optional<Double> CoordsLatitude;
+    Optional<Double> CoordsLongitude;
+    //    sys
+//        message 	System parameter, do not use it
+//        country 	Country code (GB, JP etc.)
+//        sunrise 	Sunrise time 	unix, UTC
+//        sunset 	Sunset time 	unix, UTC
+    Optional<String> Country;
+    Optional<Date> SunriseTime;
+    Optional<Date> SunsetTime;
+    //    main
+//        temp 	Temperature -> Celsius
+//        humidity 	Humidity -> %
+//        temp_min 	Minimum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally) -> Celsius
+//        temp_max 	Maximum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally) -> Celsius
+//        pressure 	Atmospheric pressure (on the sea level, if there is no sea_level or grnd_level data) -> hPa
+//        sea_level 	Atmospheric pressure on the sea level -> hPa
+//        grnd_level 	Atmospheric pressure on the ground level -> hPa
+    Optional<Double> Temperature;
+    Optional<Integer> Humidity;
+    Optional<Double> TempMin;
+    Optional<Double> TempMax;
+    Optional<Integer> Pressure;
+    Optional<Integer> PressureSeaLevel;
+    Optional<Integer> PressureGroundLevel;
+    //    wind
+//        speed 	Wind speed 	meter/sec
+//        deg 	Wind direction -> degrees (meteorological)
+//        gust 	Wind gust -> meter/sec
+    Optional<Double> WindSpeed;
+    Optional<Integer> WindDirection;
+    Optional<Double> WindGust;
+
+    //    clouds
+//        all 	Cloudiness 	%
+    Optional<Integer> Cloudiness;
+
+    //    weather (more info Weather condition codes)
+//        id 	Weather condition id
+//        main 	Group of weather parameters (Rain, Snow, Extreme etc.)
+//        description 	Weather condition within the group
+//        icon 	Weather icon id
+    Optional<Integer> WeatherId;
+    Optional<String> WeatherGroup;
+    Optional<String> WeatherDescription;
+    Optional<String> WeatherIcon;
+    //    rain
+//        1h 	Precipitation volume for last hour 	mm
+//        3h 	Precipitation volume for last 3 hours 	mm
+    Optional<Integer> Rain1h;
+    Optional<Integer> Rain3h;
+    //    snow
+//        1h 	Snow volume for last hour 	mm
+//        3h 	Snow volume for last 3 hours 	mm
+    Optional<Integer> Snow1h;
+    Optional<Integer> Snow3h;
+
+    /**
+     * @return Returns the whole JSON-String received as the
+     */
     public static String getJsonResponse() {
         return jsonResponse;
     }
@@ -45,70 +117,6 @@ public class Weather {
         return COD;
     }
 
-    //    name 	City name
-    Optional<String> Name;
-//    cod Internal parameter (probably success/error sign)
-    Optional<Integer> COD;
-//    coord
-//        lat 	City geo location, latitude
-//        lon 	City geo location, longitude
-    Optional<Double> CoordsLatitude;
-    Optional<Double> CoordsLongitude;
-//    sys
-//        message 	System parameter, do not use it
-//        country 	Country code (GB, JP etc.)
-//        sunrise 	Sunrise time 	unix, UTC
-//        sunset 	Sunset time 	unix, UTC
-    Optional<String> Country;
-    Optional<Date> SunriseTime;
-    Optional<Date> SunsetTime;
-//    main
-//        temp 	Temperature -> Celsius
-//        humidity 	Humidity -> %
-//        temp_min 	Minimum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally) -> Celsius
-//        temp_max 	Maximum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally) -> Celsius
-//        pressure 	Atmospheric pressure (on the sea level, if there is no sea_level or grnd_level data) -> hPa
-//        sea_level 	Atmospheric pressure on the sea level -> hPa
-//        grnd_level 	Atmospheric pressure on the ground level -> hPa
-    Optional<Double> Temperature;
-    Optional<Integer> Humidity;
-    Optional<Double> TempMin;
-    Optional<Double> TempMax;
-    Optional<Integer> Pressure;
-    Optional<Integer> PressureSeaLevel;
-    Optional<Integer> PressureGroundLevel;
-//    wind
-//        speed 	Wind speed 	meter/sec
-//        deg 	Wind direction -> degrees (meteorological)
-//        gust 	Wind gust -> meter/sec
-    Optional<Double> WindSpeed;
-    Optional<Integer> WindDirection;
-    Optional<Double> WindGust;
-
-//    clouds
-//        all 	Cloudiness 	% 	% 	%
-    Optional<Integer> Cloudiness;
-
-//    weather (more info Weather condition codes)
-//        id 	Weather condition id
-//        main 	Group of weather parameters (Rain, Snow, Extreme etc.) 	- 	- 	-
-//        description 	Weather condition within the group 	- 	- 	-
-//        icon 	Weather icon id 	- 	- 	-
-    Optional<Integer> WeatherId;
-    Optional<String> WeatherGroup;
-    Optional<String> WeatherDescription;
-    Optional<String> WeatherIcon;
-//    rain
-//        1h 	Precipitation volume for last hour 	mm 	mm 	mm
-//        3h 	Precipitation volume for last 3 hours 	mm 	mm 	mm
-    Optional<Integer> Rain1h;
-    Optional<Integer> Rain3h;
-//    snow
-//        1h 	Snow volume for last hour 	mm 	mm 	mm
-//        3h 	Snow volume for last 3 hours 	mm 	mm 	mm
-    Optional<Integer> Snow1h;
-    Optional<Integer> Snow3h;
-
 
 
     public Weather() throws APIException {
@@ -127,79 +135,153 @@ public class Weather {
         jsonResponse = APIHTTPRequest(cityId);
         ParseJSON();
     }
-
+    /**
+     * @return Returns Data receiving time -> unix, UTC
+     */
     public Optional<Date> getDataReceivingTime() {
         return DataReceivingTime;
     }
+    /**
+     * @return City geo location, latitude
+     */
     public Optional<Double> getCoordsLatitude() {
         return CoordsLatitude;
     }
+    /**
+     * @return City geo location, longitude
+     */
     public Optional<Double> getCoordsLongitude() {
         return CoordsLongitude;
     }
+    /**
+     * @return Country code (GB, JP etc.)
+     */
     public Optional<String> getCountry() {
         return Country;
     }
+    /**
+     * @return Sunrise time: unix, UTC
+     */
     public Optional<Date> getSunriseTime() {
         return SunriseTime;
     }
+    /**
+     * @return Sunset time: unix, UTC
+     */
     public Optional<Date> getSunsetTime() {
         return SunsetTime;
     }
+    /**
+     * @return Temperature -> Celsius
+     */
     public Optional<Double> getTemperature() {
         return Temperature;
     }
+    /**
+     * @return Humidity -> %
+     */
     public Optional<Integer> getHumidity() {
         return Humidity;
     }
+    /**
+     * @return Minimum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally) -> Celsius
+     */
     public Optional<Double> getTempMin() {
         return TempMin;
     }
+    /**
+     * @return Maximum temperature at the moment. This is deviation from current temp that is possible for large cities and megalopolises geographically expanded (use these parameter optionally) -> Celsius
+     */
     public Optional<Double> getTempMax() {
         return TempMax;
     }
+    /**
+     * @return Atmospheric pressure (on the sea level, if there is no sea_level or grnd_level data) -> hPa
+     */
     public Optional<Integer> getPressure() {
         return Pressure;
     }
+    /**
+     * @return Atmospheric pressure on the sea level -> hPa
+     */
     public Optional<Integer> getPressureSeaLevel() {
         return PressureSeaLevel;
     }
+    /**
+     * @return Atmospheric pressure on the ground level -> hPa
+     */
     public Optional<Integer> getPressureGroundLevel() {
         return PressureGroundLevel;
     }
+    /**
+     * @return Wind speed -> meter/sec
+     */
     public Optional<Double> getWindSpeed() {
         return WindSpeed;
     }
+    /**
+     * @return Wind direction -> degrees (meteorological)
+     */
     public Optional<Integer> getWindDirection() {
         return WindDirection;
     }
+    /**
+     * @return Wind gust -> meter/sec
+     */
     public Optional<Double> getWindGust() {
         return WindGust;
     }
+    /**
+     * @return Cloudiness -> %
+     */
     public Optional<Integer> getCloudiness() {
         return Cloudiness;
     }
+    /**
+     * @return Weather condition id
+     */
     public Optional<Integer> getWeatherId() {
         return WeatherId;
     }
+    /**
+     * @return Group of weather parameters (Rain, Snow, Extreme etc.)
+     */
     public Optional<String> getWeatherGroup() {
         return WeatherGroup;
     }
+    /**
+     * @return Weather condition within the group
+     */
     public Optional<String> getWeatherDescription() {
         return WeatherDescription;
     }
+    /**
+     * @return Weather icon id
+     */
     public Optional<String> getWeatherIcon() {
         return WeatherIcon;
     }
+    /**
+     * @return Precipitation volume for last hour -> mm
+     */
     public Optional<Integer> getRain1h() {
         return Rain1h;
     }
+    /**
+     * @return Precipitation volume for last 3 hours -> mm
+     */
     public Optional<Integer> getRain3h() {
         return Rain3h;
     }
+    /**
+     * @return Snow volume for last hour -> mm
+     */
     public Optional<Integer> getSnow1h() {
         return Snow1h;
     }
+    /**
+     * @return Snow volume for last 3 hours -> mm
+     */
     public Optional<Integer> getSnow3h() {
         return Snow3h;
     }
@@ -471,7 +553,4 @@ public class Weather {
             throw new APIException(e);
         }
     }
-
-
-
 }

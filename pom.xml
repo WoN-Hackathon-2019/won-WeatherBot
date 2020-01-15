@@ -12,8 +12,22 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
+    <repositories>
+        <repository>
+            <id>easycli</id>
+            <url>https://raw.github.com/schokobaer/easycli/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+    </repositories>
     <dependencies>
+        <dependency>
+            <groupId>at.apf.easycli</groupId>
+            <artifactId>easy-cli</artifactId>
+            <version>0.4</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-core</artifactId>
