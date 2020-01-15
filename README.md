@@ -46,3 +46,20 @@ If you get a message indicating your keysize is restricted on startup (`JCE unli
 
 Please refer to the general [Bot Readme](https://github.com/researchstudio-sat/webofneeds/blob/master/webofneeds/won-bot/README.md) for more information on Web of Needs Bot applications.
 
+## Functions
+### Atoms created
+#### Atoms for cities:
+* Salzburg
+* Innsbruck
+* Vienna
+* Linz
+* Paris
+* Graz
+* London
+#### There is also an interactive atom created
+You can use /weather <cityName> to get information about the cities current weather.
+ 
+ 
+In case the command is malformed, the city does not exist or other errors it tries to respond with helpful messages so you can debug your command/bot setup.
+
+
