@@ -94,30 +94,6 @@ public class Weather {
     Optional<Integer> Snow1h;
     Optional<Integer> Snow3h;
 
-    /**
-     * @return Returns the whole JSON-String received as the
-     */
-    public static String getJsonResponse() {
-        return jsonResponse;
-    }
-
-    public Optional<Integer> getCityId() {
-        return CityId;
-    }
-
-    public Optional<Integer> getTimezone() {
-        return Timezone;
-    }
-
-    public Optional<String> getName() {
-        return Name;
-    }
-
-    public Optional<Integer> getCOD() {
-        return COD;
-    }
-
-
 
     public Weather() throws APIException {
         jsonResponse = APIHTTPRequest();
@@ -135,6 +111,39 @@ public class Weather {
         jsonResponse = APIHTTPRequest(cityId);
         ParseJSON();
     }
+    /**
+     * @return Returns the whole JSON-String received as the response to the API-Call
+     */
+    public static String getJsonResponse() {
+        return jsonResponse;
+    }
+    /**
+     * @return Returns the City ID that OpenWeatherData has given the city
+     */
+    public Optional<Integer> getCityId() {
+        return CityId;
+    }
+    /**
+     * @return Returns the timezone (Shift in seconds from UTC)
+     */
+    public Optional<Integer> getTimezone() {
+        return Timezone;
+    }
+    /**
+     * @return returns the city name
+     */
+    public Optional<String> getName() {
+        return Name;
+    }
+    /**
+     * @return Internal parameter of OpenWeatherData (probably success/error sign)
+     */
+    public Optional<Integer> getCOD() {
+        return COD;
+    }
+
+
+
     /**
      * @return Returns Data receiving time -> unix, UTC
      */

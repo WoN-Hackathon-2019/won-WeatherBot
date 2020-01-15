@@ -100,7 +100,7 @@ public class SkeletonBot extends EventBot implements MatcherExtension, ServiceAt
 
 
 
-        //harald-written: EasyCli
+        //harald-written: EasyCli - parses the commands received by the chat, see https://github.com/WoN-Hackathon-2019/easycli
         CliEngine engine = new EasyEngine();
         engine.register(new Object() {
             @Command("/weather")
@@ -109,13 +109,14 @@ public class SkeletonBot extends EventBot implements MatcherExtension, ServiceAt
                 Weather w = null;
                 try {
                     w = new Weather(s);
-                    response = String.format("In **%s%s** weather is: \n" +
+                    // produces the response sent back in the chat
+                    response = String.format(Locale.US,"In **%s%s** weather is: \n" +
                                     "      ~ Description: %s, %s \n" +
                                     "      ~ Temperature: %s \n" +
                                     "      ~ Pressure: %s \n" +
                                     "      ~ Wind: %s, %s \n" +
                                     "      ~ Cloud Cover: %s%%  \n" +
-                                    "Information: lat: %.2f, lon: %.2f, information received at %s GMT, local timezone %s, CityID %s",
+                                    "Information: lat: %.2f, lon: %.2f, information received at %s GMT, local timezone GMT%s, CityID %s",
                             (w.getName().isPresent() ? w.getName().get() : s),                                              // City Name
                             (w.getCountry().isPresent() ? ", " + w.getCountry().get() : ""),                                // Country Code
                             (w.getWeatherGroup().isPresent() ? w.getWeatherGroup().get() : "value unavailable"),            // Group of weather parameters (Rain, Snow, Extreme etc.)
@@ -135,7 +136,7 @@ public class SkeletonBot extends EventBot implements MatcherExtension, ServiceAt
                             (w.getCoordsLatitude().isPresent() ? w.getCoordsLatitude().get().doubleValue() : 0),            // Latitude
                             (w.getCoordsLongitude().isPresent() ? w.getCoordsLongitude().get().doubleValue() : 0),          // Longitude
                             (w.getDataReceivingTime().isPresent() ?                                                         // Data collected at (GMT)
-                                    new SimpleDateFormat("dd.mm.yyyy hh:mm").format(w.getDataReceivingTime().get()) :
+                                    new SimpleDateFormat("dd.MM.yyyy hh:mm").format(w.getDataReceivingTime().get()) :
                                     "No Date Found!"),
                             (w.getTimezone().isPresent() ?                                                                  // Timezone of City
                                     String.format(Locale.US,"%+.1f", ((float) w.getTimezone().get()) / 3600) :
@@ -175,7 +176,7 @@ public class SkeletonBot extends EventBot implements MatcherExtension, ServiceAt
         //harald-written: publish command
         CreateAtomCommandEvent createCommand = new CreateAtomCommandEvent(atomWrapper.getDataset(), "atom_uris");
         ctx.getEventBus().publish(createCommand);
-        //harald-written: this code accepts any incoming connection request
+        //harald-written: this code accepts any incoming connection request and replies with "Accepting connection"
         getEventListenerContext().getEventBus().subscribe(
                 ConnectFromOtherAtomEvent.class,
                 new ActionOnEventListener(
@@ -184,13 +185,12 @@ public class SkeletonBot extends EventBot implements MatcherExtension, ServiceAt
                         new OpenConnectionAction(ctx, "Accepting Connection ")
                 )
         );
-        //harald-written: this code responds to any message with 'hi'
+        //harald-written: this code responds to any message either with appropriate weather data (using aboves EasyCli), with an error explaining what went wrong or with an eastergg (if you ask for weather at Venus)'
         getEventListenerContext().getEventBus().subscribe(
                 MessageFromOtherAtomEvent.class,
                 new ActionOnEventListener(
                         ctx,
                         "message-reactor",
-                        //new SendMessageAction(ctx, "hi")
                         new BaseEventBotAction(ctx) {
                             @Override
                             protected void doRun(Event event, EventListener eventListener) throws Exception {
